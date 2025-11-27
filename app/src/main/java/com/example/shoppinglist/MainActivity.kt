@@ -19,10 +19,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.shoppinglist.data.dbcontext.AppDatabase
 import com.example.shoppinglist.data.entities.Category
+import com.example.shoppinglist.data.entities.Product
 import com.example.shoppinglist.ui.categories.AddEditCategoryScreen
 import com.example.shoppinglist.ui.categories.CategoryListScreen
 import com.example.shoppinglist.ui.categories.CategoryViewModel
 import com.example.shoppinglist.ui.categories.CategoryViewModelFactory
+import com.example.shoppinglist.ui.products.AddEditProductScreen
+import com.example.shoppinglist.ui.products.ProductListScreen
+import com.example.shoppinglist.ui.products.ProductViewModel
+import com.example.shoppinglist.ui.products.ProductViewModelFactory
 import com.example.shoppinglist.ui.theme.ShoppingListTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,11 +42,16 @@ class MainActivity : ComponentActivity() {
             "shopping-list-db"
         ).build()
 
-        // 2. Create ViewModel using Factory
+        // 2. Create ViewModels
         val categoryViewModel = ViewModelProvider(
             this,
             CategoryViewModelFactory(db.categoryDao())
         )[CategoryViewModel::class.java]
+
+        val productViewModel = ViewModelProvider(
+            this,
+            ProductViewModelFactory(db.productDao(), db.categoryDao())
+        )[ProductViewModel::class.java]
 
         setContent {
             ShoppingListTheme {
@@ -49,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(categoryViewModel)
+                    MainScreen(categoryViewModel, productViewModel)
                 }
             }
         }
@@ -57,8 +67,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(categoryViewModel: CategoryViewModel) {
-    var currentTab by remember { mutableStateOf("categories") }
+fun MainScreen(
+    categoryViewModel: CategoryViewModel,
+    productViewModel: ProductViewModel
+) {
+    var currentTab by remember { mutableStateOf("products") }
 
     Scaffold(
         bottomBar = {
@@ -86,7 +99,7 @@ fun MainScreen(categoryViewModel: CategoryViewModel) {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (currentTab) {
-                "products" -> ProductsPlaceholder()
+                "products" -> ProductsNavHost(productViewModel)
                 "categories" -> CategoriesNavHost(categoryViewModel)
                 "settings" -> SettingsPlaceholder()
             }
@@ -95,12 +108,54 @@ fun MainScreen(categoryViewModel: CategoryViewModel) {
 }
 
 @Composable
+fun ProductsNavHost(viewModel: ProductViewModel) {
+    var screen by remember { mutableStateOf("list") }
+    var productToEdit by remember { mutableStateOf<Product?>(null) }
+
+    val products by viewModel.allProducts.collectAsState(initial = emptyList())
+    val categories by viewModel.allCategories.collectAsState(initial = emptyList())
+
+    when (screen) {
+        "list" -> {
+            ProductListScreen(
+                products = products,
+                categories = categories,
+                onAddProductClick = {
+                    productToEdit = null
+                    screen = "add_edit"
+                },
+                onEditProduct = { product ->
+                    productToEdit = product
+                    screen = "add_edit"
+                },
+                onDeleteProduct = { product ->
+                    viewModel.deleteProduct(product)
+                }
+            )
+        }
+        "add_edit" -> {
+            AddEditProductScreen(
+                productToEdit = productToEdit,
+                categories = categories,
+                onBackClick = { screen = "list" },
+                onSaveClick = { product ->
+                    if (product.Id == 0L) {
+                        viewModel.addProduct(product)
+                    } else {
+                        viewModel.updateProduct(product)
+                    }
+                    screen = "list"
+                }
+            )
+        }
+    }
+}
+
+@Composable
 fun CategoriesNavHost(viewModel: CategoryViewModel) {
-    // Local navigation state for the Categories tab
     var screen by remember { mutableStateOf("list") }
     var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     
-    // 3. Collect data from Room via ViewModel
     val categories by viewModel.allCategories.collectAsState(initial = emptyList())
 
     when (screen) {
@@ -126,25 +181,15 @@ fun CategoriesNavHost(viewModel: CategoryViewModel) {
                 onBackClick = { screen = "list" },
                 onSaveClick = { name ->
                     if (categoryToEdit == null) {
-                        // Create New
                         viewModel.addCategory(name)
                     } else {
-                        // Update Existing
                         val updatedCategory = categoryToEdit!!.copy(category_name = name)
                         viewModel.updateCategory(updatedCategory)
                     }
-                    screen = "list"
-                }
-            )
-        }
+                    screen = "list"          }
+        )
     }
 }
-
-@Composable
-fun ProductsPlaceholder() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Products Screen - Coming Soon!")
-    }
 }
 
 @Composable
