@@ -1,4 +1,4 @@
-package com.example.shoppinglist.daos
+package com.example.shoppinglist.data.daos
 
 import androidx.room.Dao
 import androidx.room.Delete

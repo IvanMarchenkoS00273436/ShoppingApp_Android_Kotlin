@@ -1,13 +1,13 @@
-package com.example.shoppinglist.dbcontext
+package com.example.shoppinglist.data.dbcontext
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.shoppinglist.data.daos.CategoryDao
+import com.example.shoppinglist.data.daos.ProductDao
+import com.example.shoppinglist.data.daos.UserDao
 import com.example.shoppinglist.entities.Category
 import com.example.shoppinglist.entities.Product
 import com.example.shoppinglist.entities.User
-import com.example.shoppinglist.daos.CategoryDao
-import com.example.shoppinglist.daos.ProductDao
-import com.example.shoppinglist.daos.UserDao
 
 
 @Database(entities = [User::class, Product::class, Category::class], version = 1)
