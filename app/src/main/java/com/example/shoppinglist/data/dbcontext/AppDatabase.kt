@@ -5,9 +5,9 @@ import androidx.room.RoomDatabase
 import com.example.shoppinglist.data.daos.CategoryDao
 import com.example.shoppinglist.data.daos.ProductDao
 import com.example.shoppinglist.data.daos.UserDao
-import com.example.shoppinglist.entities.Category
-import com.example.shoppinglist.entities.Product
-import com.example.shoppinglist.entities.User
+import com.example.shoppinglist.data.entities.Category
+import com.example.shoppinglist.data.entities.Product
+import com.example.shoppinglist.data.entities.User
 
 
 @Database(entities = [User::class, Product::class, Category::class], version = 1)
