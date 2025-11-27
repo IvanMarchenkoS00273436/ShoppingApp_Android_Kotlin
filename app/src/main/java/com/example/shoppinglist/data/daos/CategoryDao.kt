@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.shoppinglist.entities.Category
+import com.example.shoppinglist.data.entities.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
