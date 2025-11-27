@@ -12,18 +12,18 @@ import com.example.shoppinglist.entities.User
 interface UserDao {
     // --- Create ---
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg users: User)
+    suspend fun insertAll(vararg users: User)
 
     // --- Read ---
     @Query("SELECT * FROM users")
-    fun getAll(): List<User>
+    suspend fun getAll(): List<User>
 
     @Query("SELECT * FROM users WHERE Id = :userId")
-    fun getUserById(userId: Long): User?
+    suspend fun getUserById(userId: Long): User?
 
     // --- Update ---
     @Update
-    fun update(user: User)
+    suspend fun update(user: User)
 
     // --- Delete ---
     @Delete

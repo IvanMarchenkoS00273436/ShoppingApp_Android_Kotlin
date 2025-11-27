@@ -17,13 +17,13 @@ interface ProductDao {
 
     // --- Read ---
     @Query("SELECT * FROM products ORDER BY DateAdded DESC")
-    fun getAllProducts(): Flow<List<Product>>
+    suspend fun getAllProducts(): Flow<List<Product>>
 
     @Query("SELECT * FROM products WHERE Id = :productId")
     suspend fun getProductById(productId: Long): Product?
 
     @Query("SELECT * FROM products WHERE product_category_id = :categoryId")
-    fun getProductsByCategory(categoryId: Long): Flow<List<Product>>
+    suspend fun getProductsByCategory(categoryId: Long): Flow<List<Product>>
 
     // --- Update ---
     @Update
