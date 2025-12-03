@@ -25,6 +25,7 @@ import com.example.shoppinglist.ui.categories.CategoryListScreen
 import com.example.shoppinglist.ui.categories.CategoryViewModel
 import com.example.shoppinglist.ui.categories.CategoryViewModelFactory
 import com.example.shoppinglist.ui.products.AddEditProductScreen
+import com.example.shoppinglist.ui.products.ProductDetailsScreen
 import com.example.shoppinglist.ui.products.ProductListScreen
 import com.example.shoppinglist.ui.products.ProductViewModel
 import com.example.shoppinglist.ui.products.ProductViewModelFactory
@@ -110,7 +111,7 @@ fun MainScreen(
 @Composable
 fun ProductsNavHost(viewModel: ProductViewModel) {
     var screen by remember { mutableStateOf("list") }
-    var productToEdit by remember { mutableStateOf<Product?>(null) }
+    var selectedProduct by remember { mutableStateOf<Product?>(null) } // Used for Edit and Details
 
     val products by viewModel.allProducts.collectAsState(initial = emptyList())
     val categories by viewModel.allCategories.collectAsState(initial = emptyList())
@@ -121,11 +122,15 @@ fun ProductsNavHost(viewModel: ProductViewModel) {
                 products = products,
                 categories = categories,
                 onAddProductClick = {
-                    productToEdit = null
+                    selectedProduct = null
                     screen = "add_edit"
                 },
+                onProductClick = { product ->
+                    selectedProduct = product
+                    screen = "details"
+                },
                 onEditProduct = { product ->
-                    productToEdit = product
+                    selectedProduct = product
                     screen = "add_edit"
                 },
                 onDeleteProduct = { product ->
@@ -133,18 +138,43 @@ fun ProductsNavHost(viewModel: ProductViewModel) {
                 }
             )
         }
+        "details" -> {
+            if (selectedProduct != null) {
+                // Ensure we have the latest version of the product from the list
+                val currentProduct = products.find { it.Id == selectedProduct!!.Id } ?: selectedProduct!!
+                val category = categories.find { it.category_id == currentProduct.categoryId }
+
+                ProductDetailsScreen(
+                    product = currentProduct,
+                    category = category,
+                    onBackClick = { screen = "list" },
+                    onEditClick = { screen = "add_edit" },
+                    onDeleteClick = {
+                        viewModel.deleteProduct(currentProduct)
+                        screen = "list"
+                    }
+                )
+            } else {
+                // Fallback if state is lost
+                screen = "list"
+            }
+        }
         "add_edit" -> {
             AddEditProductScreen(
-                productToEdit = productToEdit,
+                productToEdit = selectedProduct,
                 categories = categories,
-                onBackClick = { screen = "list" },
+                onBackClick = { 
+                    // If we were editing from details, go back to details, else list
+                    screen = if (selectedProduct != null && selectedProduct!!.Id != 0L) "details" else "list" 
+                },
                 onSaveClick = { product ->
                     if (product.Id == 0L) {
                         viewModel.addProduct(product)
+                        screen = "list"
                     } else {
                         viewModel.updateProduct(product)
+                        screen = "list"
                     }
-                    screen = "list"
                 }
             )
         }

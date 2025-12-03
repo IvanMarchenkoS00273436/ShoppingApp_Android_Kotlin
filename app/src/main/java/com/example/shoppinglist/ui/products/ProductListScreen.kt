@@ -23,6 +23,7 @@ fun ProductListScreen(
     products: List<Product>,
     categories: List<Category>,
     onAddProductClick: () -> Unit,
+    onProductClick: (Product) -> Unit, // Add this parameter
     onEditProduct: (Product) -> Unit,
     onDeleteProduct: (Product) -> Unit
 ) {
@@ -52,6 +53,7 @@ fun ProductListScreen(
                 ProductCard(
                     product = product,
                     categoryName = categoryName,
+                    onClick = { onProductClick(product) }, // Pass click event
                     onEdit = { onEditProduct(product) },
                     onDelete = { showDeleteDialog = product }
                 )
@@ -76,10 +78,12 @@ fun ProductListScreen(
 fun ProductCard(
     product: Product,
     categoryName: String,
+    onClick: () -> Unit, // Add this parameter
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     ElevatedCard(
+        onClick = onClick, // Enable click on card
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
