@@ -33,7 +33,7 @@ fun ProductListScreen(
             TopAppBar(title = { Text("Shopping List") })
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
+            FloatingActionButton(
                 onClick = onAddProductClick,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
