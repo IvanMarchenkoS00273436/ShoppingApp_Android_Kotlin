@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
@@ -29,6 +29,7 @@ import com.example.shoppinglist.ui.products.ProductDetailsScreen
 import com.example.shoppinglist.ui.products.ProductListScreen
 import com.example.shoppinglist.ui.products.ProductViewModel
 import com.example.shoppinglist.ui.products.ProductViewModelFactory
+import com.example.shoppinglist.ui.settings.SettingsScreen
 import com.example.shoppinglist.ui.theme.ShoppingListTheme
 
 class MainActivity : ComponentActivity() {
@@ -55,12 +56,21 @@ class MainActivity : ComponentActivity() {
         )[ProductViewModel::class.java]
 
         setContent {
-            ShoppingListTheme {
+            // Theme State
+            val systemDark = isSystemInDarkTheme()
+            var isDarkTheme by remember { mutableStateOf(systemDark) }
+
+            ShoppingListTheme(darkTheme = isDarkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(categoryViewModel, productViewModel)
+                    MainScreen(
+                        categoryViewModel, 
+                        productViewModel,
+                        isDarkTheme,
+                        onThemeChange = { isDarkTheme = it }
+                    )
                 }
             }
         }
@@ -70,7 +80,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     categoryViewModel: CategoryViewModel,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
 ) {
     var currentTab by remember { mutableStateOf("products") }
 
@@ -102,7 +114,7 @@ fun MainScreen(
             when (currentTab) {
                 "products" -> ProductsNavHost(productViewModel)
                 "categories" -> CategoriesNavHost(categoryViewModel)
-                "settings" -> SettingsPlaceholder()
+                "settings" -> SettingsScreen(isDarkTheme, onThemeChange)
             }
         }
     }
@@ -216,15 +228,9 @@ fun CategoriesNavHost(viewModel: CategoryViewModel) {
                         val updatedCategory = categoryToEdit!!.copy(category_name = name)
                         viewModel.updateCategory(updatedCategory)
                     }
-                    screen = "list"          }
-        )
-    }
-}
-}
-
-@Composable
-fun SettingsPlaceholder() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Settings Screen - Coming Soon!")
+                    screen = "list"
+                }
+            )
+        }
     }
 }
