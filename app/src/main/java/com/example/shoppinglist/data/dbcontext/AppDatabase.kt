@@ -11,6 +11,7 @@ import com.example.shoppinglist.data.entities.Product
 import com.example.shoppinglist.data.entities.User
 import com.example.shoppinglist.data.convertors.Converters
 
+// AppDatabase class integrating DAOs and Converters
 @Database(entities = [User::class, Product::class, Category::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

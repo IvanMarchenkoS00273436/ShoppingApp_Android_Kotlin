@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+// ViewModel for managing products and categories
 class ProductViewModel(
     private val productDao: ProductDao,
     private val categoryDao: CategoryDao
 ) : ViewModel() {
 
+    // StateFlow for all products
     val allProducts: StateFlow<List<Product>> = productDao.getAllProducts()
         .stateIn(
             scope = viewModelScope,
@@ -24,6 +26,7 @@ class ProductViewModel(
             initialValue = emptyList()
         )
 
+    // StateFlow for all categories
     val allCategories: StateFlow<List<Category>> = categoryDao.getAllCategories()
         .stateIn(
             scope = viewModelScope,
@@ -31,18 +34,21 @@ class ProductViewModel(
             initialValue = emptyList()
         )
 
+    // Function to add Product
     fun addProduct(product: Product) {
         viewModelScope.launch {
             productDao.insert(product)
         }
     }
 
+    // Function to update Product
     fun updateProduct(product: Product) {
         viewModelScope.launch {
             productDao.update(product)
         }
     }
 
+    // Function to delete Product
     fun deleteProduct(product: Product) {
         viewModelScope.launch {
             productDao.delete(product)
@@ -50,6 +56,7 @@ class ProductViewModel(
     }
 }
 
+// Factory for creating ProductViewModel instances
 class ProductViewModelFactory(
     private val productDao: ProductDao,
     private val categoryDao: CategoryDao

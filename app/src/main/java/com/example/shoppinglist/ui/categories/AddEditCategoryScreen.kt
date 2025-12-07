@@ -13,6 +13,7 @@ import com.example.shoppinglist.data.entities.Category
 import com.example.shoppinglist.data.entities.Product
 import java.util.Date
 
+// AddEditProductScreen Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditProductScreen(
@@ -21,6 +22,7 @@ fun AddEditProductScreen(
     onBackClick: () -> Unit,
     onSaveClick: (Product) -> Unit
 ) {
+    // Variables for form fields
     var productName by remember { mutableStateOf(productToEdit?.ProductName ?: "") }
     var quantity by remember { mutableStateOf(productToEdit?.Quantity?.toString() ?: "1") }
     var unit by remember { mutableStateOf(productToEdit?.Unit ?: "") }
@@ -31,6 +33,7 @@ fun AddEditProductScreen(
     
     var expanded by remember { mutableStateOf(false) }
 
+    // UI Layout
     Scaffold(
         topBar = {
             TopAppBar(

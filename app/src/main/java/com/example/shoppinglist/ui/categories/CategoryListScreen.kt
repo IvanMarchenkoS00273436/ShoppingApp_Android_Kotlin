@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.data.entities.Category
 
+// Screen to display the list of categories
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryListScreen(
@@ -27,6 +28,7 @@ fun CategoryListScreen(
 ) {
     var showDeleteDialog by remember { mutableStateOf<Category?>(null) }
 
+    // Scaffold for the category list screen
     Scaffold(
         topBar = {
             TopAppBar(
@@ -38,6 +40,7 @@ fun CategoryListScreen(
                 }
             )
         },
+        // Floating action button for adding a new category
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddCategoryClick,
@@ -48,6 +51,7 @@ fun CategoryListScreen(
             }
         }
     ) { innerPadding ->
+        // List of categories
         LazyColumn(
             contentPadding = innerPadding,
             modifier = Modifier.fillMaxSize(),
@@ -62,6 +66,7 @@ fun CategoryListScreen(
             }
         }
 
+        // Delete confirmation dialog
         if (showDeleteDialog != null) {
             DeleteConfirmationDialog(
                 title = "Delete this category?",
@@ -76,31 +81,35 @@ fun CategoryListScreen(
     }
 }
 
+// Card composable to display a single category
 @Composable
 fun CategoryCard(
     category: Category,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    // Card to display category details with edit and delete options
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
+        // Row to arrange category name and action buttons horizontally
         Row(
             modifier = Modifier
                 .padding(16.dp)
                 .heightIn(min = 48.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Category name
             Text(
                 text = category.category_name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            
+            // Edit and Delete buttons
             IconButton(onClick = onEdit) {
                 Icon(
                     imageVector = Icons.Default.Edit,

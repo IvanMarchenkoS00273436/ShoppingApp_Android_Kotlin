@@ -17,6 +17,7 @@ import com.example.shoppinglist.data.entities.Category
 import com.example.shoppinglist.data.entities.Product
 import com.example.shoppinglist.ui.categories.DeleteConfirmationDialog
 
+// Product List Screen Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListScreen(
@@ -29,6 +30,7 @@ fun ProductListScreen(
 ) {
     var showDeleteDialog by remember { mutableStateOf<Product?>(null) }
 
+    // Scaffold for Product List Screen
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Shopping List") })
@@ -43,6 +45,7 @@ fun ProductListScreen(
             }
         }
     ) { innerPadding ->
+        // Product List
         LazyColumn(
             contentPadding = innerPadding,
             modifier = Modifier.fillMaxSize(),
@@ -60,6 +63,7 @@ fun ProductListScreen(
             }
         }
 
+        // Delete Confirmation Dialog
         if (showDeleteDialog != null) {
             DeleteConfirmationDialog(
                 title = "Delete Product?",
@@ -74,11 +78,12 @@ fun ProductListScreen(
     }
 }
 
+// Product Card Composable
 @Composable
 fun ProductCard(
     product: Product,
     categoryName: String,
-    onClick: () -> Unit, // Add this parameter
+    onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -89,6 +94,7 @@ fun ProductCard(
             .padding(horizontal = 16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
+        // Product Card content
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically

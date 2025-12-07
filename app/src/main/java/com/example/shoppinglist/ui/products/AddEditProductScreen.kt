@@ -13,6 +13,7 @@ import com.example.shoppinglist.data.entities.Category
 import com.example.shoppinglist.data.entities.Product
 import java.util.Date
 
+// Screen for adding or editing a product
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditProductScreen(
@@ -59,6 +60,7 @@ fun AddEditProductScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Quantity and Unit Input Fields
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -71,6 +73,7 @@ fun AddEditProductScreen(
                     modifier = Modifier.weight(1f)
                 )
 
+                // Unit Input Field
                 OutlinedTextField(
                     value = unit,
                     onValueChange = { unit = it },
@@ -110,6 +113,7 @@ fun AddEditProductScreen(
                 }
             }
 
+            // Notes Input Field
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
@@ -120,6 +124,7 @@ fun AddEditProductScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Save Button
             Button(
                 onClick = {
                     val newProduct = Product(

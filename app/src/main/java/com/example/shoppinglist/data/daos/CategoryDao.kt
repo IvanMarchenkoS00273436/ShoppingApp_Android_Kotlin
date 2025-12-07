@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.shoppinglist.data.entities.Category
 import kotlinx.coroutines.flow.Flow
 
+// Data Access Object for Category entity
 @Dao
 interface CategoryDao {
     // --- Create ---

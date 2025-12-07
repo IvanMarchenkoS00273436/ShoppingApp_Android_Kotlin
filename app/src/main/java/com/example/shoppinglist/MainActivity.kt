@@ -32,7 +32,9 @@ import com.example.shoppinglist.ui.products.ProductViewModelFactory
 import com.example.shoppinglist.ui.settings.SettingsScreen
 import com.example.shoppinglist.ui.theme.ShoppingListTheme
 
+// Main Activity hosting the Compose UI
 class MainActivity : ComponentActivity() {
+    // Entry point of the application
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +52,7 @@ class MainActivity : ComponentActivity() {
             CategoryViewModelFactory(db.categoryDao())
         )[CategoryViewModel::class.java]
 
+        // 3. Product ViewModel requires both ProductDao and CategoryDao
         val productViewModel = ViewModelProvider(
             this,
             ProductViewModelFactory(db.productDao(), db.categoryDao())
@@ -77,6 +80,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Main Screen with Bottom Navigation
 @Composable
 fun MainScreen(
     categoryViewModel: CategoryViewModel,
@@ -86,6 +90,7 @@ fun MainScreen(
 ) {
     var currentTab by remember { mutableStateOf("products") }
 
+    // Scaffold with Bottom Navigation
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -120,6 +125,7 @@ fun MainScreen(
     }
 }
 
+// Navigation Host for Products
 @Composable
 fun ProductsNavHost(viewModel: ProductViewModel) {
     var screen by remember { mutableStateOf("list") }
@@ -193,6 +199,7 @@ fun ProductsNavHost(viewModel: ProductViewModel) {
     }
 }
 
+// Navigation Host for Categories
 @Composable
 fun CategoriesNavHost(viewModel: CategoryViewModel) {
     var screen by remember { mutableStateOf("list") }

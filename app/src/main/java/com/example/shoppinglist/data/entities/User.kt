@@ -3,7 +3,7 @@ package com.example.shoppinglist.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
+// User entity representing a user in the shopping list application
 @Entity(tableName = "users")
 class User (
             @PrimaryKey(autoGenerate = true)

@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.shoppinglist.data.entities.User
 
+// Data Access Object for User entity
 @Dao
 interface UserDao {
     // --- Create ---

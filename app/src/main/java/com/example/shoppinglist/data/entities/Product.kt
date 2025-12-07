@@ -16,6 +16,8 @@ import java.util.Date
         )
     ]
 )
+
+// Product entity representing a product in the shopping list
 data class Product (
             @PrimaryKey(autoGenerate = true)
             val Id: Long = 0,

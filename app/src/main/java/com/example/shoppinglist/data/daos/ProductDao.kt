@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.example.shoppinglist.data.entities.Product
 import kotlinx.coroutines.flow.Flow
 
+// Data Access Object for Product entity
 @Dao
 interface ProductDao {
     // --- Create ---
