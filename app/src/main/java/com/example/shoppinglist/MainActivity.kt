@@ -17,6 +17,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.shoppinglist.data.dbcontext.AppDatabase
 import com.example.shoppinglist.data.entities.Category
 import com.example.shoppinglist.data.entities.Product
@@ -31,6 +34,8 @@ import com.example.shoppinglist.ui.products.ProductViewModel
 import com.example.shoppinglist.ui.products.ProductViewModelFactory
 import com.example.shoppinglist.ui.settings.SettingsScreen
 import com.example.shoppinglist.ui.theme.ShoppingListTheme
+import com.example.shoppinglist.workers.CleanupWorker
+import java.util.concurrent.TimeUnit
 
 // Main Activity hosting the Compose UI
 class MainActivity : ComponentActivity() {
@@ -39,20 +44,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 1. Initialize Room Database
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "shopping-list-db"
-        ).build()
+        // 1. Initialize Room Database (Use Singleton)
+        val db = AppDatabase.getDatabase(applicationContext)
 
-        // 2. Create ViewModels
+        // 2. Schedule Background Cleanup (Runs once a day)
+        val cleanupRequest = PeriodicWorkRequestBuilder<CleanupWorker>(1, TimeUnit.DAYS).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "CleanupOldProducts",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            cleanupRequest
+        )
+
+        // 3. Create ViewModels
         val categoryViewModel = ViewModelProvider(
             this,
             CategoryViewModelFactory(db.categoryDao())
         )[CategoryViewModel::class.java]
 
-        // 3. Product ViewModel requires both ProductDao and CategoryDao
+        // 4. Product ViewModel requires both ProductDao and CategoryDao
         val productViewModel = ViewModelProvider(
             this,
             ProductViewModelFactory(db.productDao(), db.categoryDao())

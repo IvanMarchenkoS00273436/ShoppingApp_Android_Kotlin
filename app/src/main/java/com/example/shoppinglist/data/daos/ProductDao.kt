@@ -34,4 +34,6 @@ interface ProductDao {
     @Delete
     suspend fun delete(product: Product)
 
+    @Query("DELETE FROM products WHERE DateAdded < :timestamp")
+    suspend fun deleteOldProducts(timestamp: Long)
 }
